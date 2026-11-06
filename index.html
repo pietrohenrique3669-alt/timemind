@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#1765d1">
+  <meta name="description" content="TimeMind — organize seu tempo e sua rotina.">
+  <title>TimeMind</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <style>
+    :root{--blue:#1765d1;--blue2:#0e4fae;--ink:#19395f;--muted:#7187a3;--bg:#f3f7ff;--line:#e2ebf7;--white:#fff}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    button,input,select{font:inherit} button{cursor:pointer}
+    .app{max-width:560px;min-height:100dvh;margin:auto;padding:18px 16px 28px}
+    header{display:flex;align-items:center;justify-content:space-between;margin:2px 2px 20px}
+    .brand{display:flex;align-items:center;gap:10px}.logo{width:46px;height:46px;background:#fff;border-radius:14px;padding:4px;box-shadow:0 4px 14px #174f9414}
+    h1{font-size:22px;line-height:1;margin:0;color:var(--blue2)} .tagline{font-size:12px;color:var(--muted);margin-top:5px}
+    .pill{font-size:10px;letter-spacing:.07em;font-weight:800;color:var(--blue);background:#e3efff;padding:7px 10px;border-radius:99px}
+    .hero{background:linear-gradient(135deg,#1765d1,#0e4fae);color:white;padding:22px;border-radius:24px;box-shadow:0 12px 28px #1765d12b}
+    .eyebrow{font-size:11px;font-weight:800;letter-spacing:.09em;color:#d7e8ff}
+    .hero h2{font-size:25px;margin:8px 0 17px;line-height:1.15}
+    .stats{display:flex;justify-content:space-between;align-items:center;gap:15px}
+    .stat-label{font-size:12px;color:#d7e8ff}.stat-number{font-size:28px;font-weight:800;margin-top:2px}
+    .percent{width:68px;height:68px;border:4px solid #a8ceff;border-radius:50%;display:grid;place-items:center;font-size:17px;font-weight:800;flex:none}
+    .progress{height:8px;background:#568bd0;border-radius:99px;overflow:hidden;margin-top:15px}.progress>span{display:block;height:100%;background:white;border-radius:99px;transition:width .2s}
+    .hint{font-size:12px;color:#e5f0ff;margin:9px 0 0}
+    .section-head{display:flex;justify-content:space-between;align-items:center;margin:24px 2px 12px}
+    h3{font-size:19px;margin:0}.count{font-size:12px;color:var(--muted)}
+    .filters{display:flex;gap:6px;background:#e7effb;padding:4px;border-radius:13px;margin-bottom:12px}
+    .filters button{flex:1;border:0;background:transparent;color:#627d9e;border-radius:10px;padding:9px 4px;font-size:13px;font-weight:650}
+    .filters button.active{background:white;color:var(--blue);box-shadow:0 2px 8px #234d7914}
+    .task-list{display:grid;gap:9px}
+    .task{display:flex;align-items:center;gap:11px;background:white;border:1px solid #edf2f9;border-radius:16px;padding:13px;box-shadow:0 3px 10px #19395f08}
+    .task input[type=checkbox]{width:19px;height:19px;accent-color:var(--blue);flex:none}
+    .task-main{min-width:0;flex:1}.task-name{font-weight:700;overflow-wrap:anywhere}.task.done .task-name{text-decoration:line-through;color:#9aabc0}
+    .meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:4px}
+    .priority{border-radius:99px;padding:2px 7px;font-weight:700}.high{background:#ffeded;color:#c34d4d}.medium{background:#fff4dd;color:#9b6b0b}.low{background:#e7f7ed;color:#348451}
+    .status{font-size:10px;color:#7187a3;background:#f1f5fa;padding:5px 7px;border-radius:8px;white-space:nowrap}
+    .delete{border:0;background:transparent;color:#9aabc0;font-size:19px;padding:3px 5px}.delete:hover{color:#c34d4d}
+    .primary{width:100%;border:0;border-radius:14px;background:var(--blue);color:white;font-weight:750;padding:13px;margin-top:12px;box-shadow:0 5px 13px #1765d126}
+    .primary:active{transform:scale(.99)} .secondary{border:1px solid var(--line);background:white;color:var(--blue);border-radius:12px;padding:10px 13px;font-weight:700}
+    .panel{background:white;border:1px solid #edf2f9;border-radius:19px;padding:16px;margin-top:15px}
+    .panel-head{display:flex;justify-content:space-between;align-items:center;font-weight:750}
+    .panel p{font-size:13px;color:var(--muted);margin:8px 0 12px}
+    .tip{display:flex;gap:10px;align-items:flex-start}.tip-icon{font-size:20px}
+    .bottom{display:flex;justify-content:space-around;border-top:1px solid var(--line);margin-top:22px;padding:15px 0 2px;color:var(--blue);font-size:11px;font-weight:750}
+    .bottom span{display:grid;justify-items:center;gap:4px}.bottom b{font-size:19px}
+    .modal-backdrop{position:fixed;inset:0;background:#102b4d80;display:none;align-items:flex-end;justify-content:center;padding:14px;z-index:5}
+    .modal-backdrop.show{display:flex}.modal{width:min(100%,520px);background:white;border-radius:23px;padding:20px;box-shadow:0 15px 50px #102b4d40}
+    .modal h3{margin-bottom:15px}.field{display:grid;gap:6px;margin:12px 0}.field label{font-size:12px;font-weight:750;color:#587595}
+    .field input,.field select{width:100%;padding:12px;border:1px solid #dce6f2;border-radius:12px;background:#fbfdff;color:var(--ink);outline-color:var(--blue)}
+    .form-actions{display:flex;gap:9px;margin-top:16px}.form-actions>*{flex:1}
+    .empty{text-align:center;color:var(--muted);background:white;padding:25px;border-radius:16px;font-size:13px}
+    .focus-on{background:#e5f0ff;border-color:#c9ddfa}.focus-time{font-size:27px;font-weight:800;color:var(--blue);font-variant-numeric:tabular-nums}
+    @media(min-width:600px){body{padding:20px 0}.app{background:var(--bg);border-radius:28px;box-shadow:0 8px 40px #19395f12}}
+  </style>
+</head>
+<body>
+<main class="app">
+  <header>
+    <div class="brand">
+      <img class="logo" src="icons/icon-192.png" alt="Logo TimeMind">
+      <div><h1>TimeMind</h1><div class="tagline">Seu tempo, sob controle.</div></div>
+    </div>
+    <div class="pill">PRODUTIVIDADE</div>
+  </header>
+
+  <section class="hero">
+    <div class="eyebrow">SEU DIA, SUA ORGANIZAÇÃO</div>
+    <h2 id="greeting">Olá! 👋<br>Vamos aproveitar seu dia?</h2>
+    <div class="stats">
+      <div><div class="stat-label">Tarefas concluídas</div><div class="stat-number" id="task-count">0/0</div></div>
+      <div class="percent" id="percent">0%</div>
+    </div>
+    <div class="progress"><span id="progress-fill" style="width:0%"></span></div>
+    <p class="hint" id="progress-hint">Cada tarefa concluída é um passo à frente.</p>
+  </section>
+
+  <div class="section-head"><h3>Minha rotina</h3><span class="count" id="total-count">0 tarefas</span></div>
+  <div class="filters" role="tablist">
+    <button class="active" data-filter="all">Todas</button><button data-filter="pending">Pendentes</button><button data-filter="done">Concluídas</button>
+  </div>
+  <section class="task-list" id="task-list" aria-live="polite"></section>
+  <button class="primary" id="add-open">＋ Adicionar tarefa</button>
+
+  <section class="panel" id="focus-panel">
+    <div class="panel-head"><span>◉ Modo concentração</span><span id="focus-state" class="count">Desativado</span></div>
+    <p id="focus-copy">Reserve um período para se dedicar a uma atividade sem distrações.</p>
+    <div id="timer-area" hidden><div class="focus-time" id="timer">25:00</div><p>Tempo de foco restante</p></div>
+    <button class="secondary" id="focus-toggle">Iniciar foco de 25 min</button>
+  </section>
+
+  <section class="panel tip">
+    <div class="tip-icon">💡</div><div><div class="panel-head">Dica TimeMind</div><p>Organize suas tarefas por prioridade e reserve horários para descansar. Uma rotina equilibrada também é produtiva!</p></div>
+  </section>
+
+  <nav class="bottom" aria-label="Navegação">
+    <span><b>⌂</b>Início</span><span><b>▦</b>Rotina</span><span><b>▥</b>Progresso</span><span><b>♙</b>Perfil</span>
+  </nav>
+</main>
+
+<div class="modal-backdrop" id="modal">
+  <form class="modal" id="task-form">
+    <h3>Nova tarefa</h3>
+    <div class="field"><label for="task-name">O que você precisa fazer?</label><input id="task-name" maxlength="90" placeholder="Ex.: Estudar matemática" required></div>
+    <div class="field"><label for="task-time">Horário</label><input id="task-time" type="time" value="15:00" required></div>
+    <div class="field"><label for="task-priority">Prioridade</label><select id="task-priority"><option value="Alta">Alta</option><option value="Média" selected>Média</option><option value="Baixa">Baixa</option></select></div>
+    <div class="form-actions"><button type="button" class="secondary" id="cancel-add">Cancelar</button><button type="submit" class="primary" style="margin:0">Salvar tarefa</button></div>
+  </form>
+</div>
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const today = new Date().toISOString().slice(0,10);
+  const starter = [
+    {id:1,name:"Estudar matemática",time:"09:00",done:false,priority:"Alta",date:today},
+    {id:2,name:"Revisar conteúdos",time:"11:00",done:false,priority:"Média",date:today},
+    {id:3,name:"Fazer uma pausa",time:"14:00",done:false,priority:"Baixa",date:today}
+  ];
+  let tasks = [];
+  try { tasks = JSON.parse(localStorage.getItem("timemind-tasks") || "null") || starter; } catch { tasks = starter; }
+  let filter = "all", focusEnd = 0, focusInterval = null;
+  const save = () => localStorage.setItem("timemind-tasks", JSON.stringify(tasks));
+  const priorityClass = p => p==="Alta"?"high":p==="Média"?"medium":"low";
+  function render(){
+    const todayTasks = tasks.filter(t=>t.date===today);
+    const done = todayTasks.filter(t=>t.done).length, total=todayTasks.length, pct=total?Math.round(done/total*100):0;
+    $("#task-count").textContent=`${done}/${total}`; $("#percent").textContent=pct+"%";
+    $("#progress-fill").style.width=pct+"%"; $("#total-count").textContent=total+(total===1?" tarefa":" tarefas");
+    $("#progress-hint").textContent=pct===100&&total?"Parabéns! Você concluiu tudo por hoje. 🎉":"Cada tarefa concluída é um passo à frente.";
+    const shown=todayTasks.filter(t=>filter==="all"||(filter==="pending"&&!t.done)||(filter==="done"&&t.done)).sort((a,b)=>a.time.localeCompare(b.time));
+    $("#task-list").innerHTML=shown.length?shown.map(t=>`
+      <article class="task ${t.done?"done":""}">
+        <input type="checkbox" aria-label="Marcar ${escapeHtml(t.name)} como concluída" data-check="${t.id}" ${t.done?"checked":""}>
+        <div class="task-main"><div class="task-name">${escapeHtml(t.name)}</div><div class="meta"><span>◷ ${t.time}</span><span class="priority ${priorityClass(t.priority)}">${t.priority}</span></div></div>
+        <span class="status">${t.done?"Feita":"Pendente"}</span>
+        <button class="delete" title="Excluir tarefa" aria-label="Excluir tarefa" data-delete="${t.id}">×</button>
+      </article>`).join(""):`<div class="empty">${filter==="done"?"Você ainda não concluiu tarefas nesta lista.":filter==="pending"?"Tudo em dia! Não há tarefas pendentes.":"Nenhuma tarefa por aqui. Adicione a primeira!"}</div>`;
+    document.querySelectorAll("[data-check]").forEach(el=>el.addEventListener("change",()=>{const t=tasks.find(x=>x.id==el.dataset.check);if(t){t.done=el.checked;save();render();}}));
+    document.querySelectorAll("[data-delete]").forEach(el=>el.addEventListener("click",()=>{tasks=tasks.filter(x=>x.id!=el.dataset.delete);save();render();}));
+  }
+  function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+  document.querySelectorAll("[data-filter]").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.filter;document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("active",x===b));render();}));
+  const modal=$("#modal"); $("#add-open").onclick=()=>{modal.classList.add("show");$("#task-name").focus();};
+  $("#cancel-add").onclick=()=>modal.classList.remove("show");
+  modal.addEventListener("click",e=>{if(e.target===modal)modal.classList.remove("show");});
+  $("#task-form").addEventListener("submit",e=>{
+    e.preventDefault();const name=$("#task-name").value.trim();if(!name)return;
+    tasks.push({id:Date.now(),name,time:$("#task-time").value,priority:$("#task-priority").value,done:false,date:today});
+    save();filter="all";document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("active",x.dataset.filter==="all"));
+    render();e.target.reset();$("#task-time").value="15:00";modal.classList.remove("show");
+  });
+  function updateTimer(){
+    const left=Math.max(0,Math.ceil((focusEnd-Date.now())/1000)),m=String(Math.floor(left/60)).padStart(2,"0"),s=String(left%60).padStart(2,"0");
+    $("#timer").textContent=`${m}:${s}`;
+    if(left<=0){clearInterval(focusInterval);focusInterval=null;$("#focus-state").textContent="Concluído";$("#focus-copy").textContent="Muito bem! Seu período de foco terminou.";$("#focus-toggle").textContent="Iniciar outro período";$("#timer-area").hidden=true;$("#focus-panel").classList.remove("focus-on");}
+  }
+  $("#focus-toggle").onclick=()=>{
+    if(focusInterval){clearInterval(focusInterval);focusInterval=null;$("#focus-state").textContent="Pausado";$("#focus-copy").textContent="Seu período foi pausado. Você pode iniciar outro quando quiser.";$(" #timer-area".trim()).hidden=true;$("#focus-toggle").textContent="Retomar foco de 25 min";$("#focus-panel").classList.remove("focus-on");}
+    else {focusEnd=Date.now()+25*60*1000;$("#focus-state").textContent="Em andamento";$("#focus-copy").textContent="Agora é hora de se concentrar em uma coisa de cada vez." ;$("#timer-area").hidden=false;$("#focus-panel").classList.add("focus-on");$("#focus-toggle").textContent="Pausar foco";updateTimer();focusInterval=setInterval(updateTimer,250);}
+  };
+  const hour=new Date().getHours();$("#greeting").innerHTML=(hour<12?"Bom dia! ☀️":hour<18?"Boa tarde! 👋":"Boa noite! 🌙")+"<br>Vamos aproveitar seu dia?";
+  render();
+  if("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("./sw.js").catch(()=>{});
+})();
+</script>
+</body>
+</html>
